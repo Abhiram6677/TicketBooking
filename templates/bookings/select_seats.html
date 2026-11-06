@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Select seats · {{ show.event.title }}{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
+  <div>
+    <nav class="small"><a href="{{ show.event.get_absolute_url }}">{{ show.event.title }}</a> / Seats</nav>
+    <h1 class="h4 mb-0">{{ show.event.title }}</h1>
+    <div class="text-muted small">{{ show.venue }} · {{ show.start_time|date:"D, d M Y · h:i A" }}</div>
+  </div>
+  <div class="text-muted small">₹{{ show.price }} per seat · max {{ max_seats }} seats</div>
+</div>
+
+<form method="post" id="seat-form">{% csrf_token %}
+  <div class="card shadow-sm">
+    <div class="card-body seat-area">
+      <div class="screen mb-4">SCREEN / STAGE THIS WAY</div>
+      <div class="seat-grid">
+        {% for row, seats in seat_map %}
+          <div class="seat-row">
+            <span class="row-label">{{ row }}</span>
+            {% for seat in seats %}
+              <label class="seat {% if seat.booked %}booked{% endif %}" title="{{ seat.label }}">
+                <input type="checkbox" name="seats" value="{{ seat.label }}" {% if seat.booked %}disabled{% endif %}>
+                <span>{{ forloop.counter }}</span>
+              </label>
+            {% endfor %}
+            <span class="row-label">{{ row }}</span>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="legend mt-4 small">
+        <span><i class="seat-swatch"></i> Available</span>
+        <span><i class="seat-swatch selected"></i> Selected</span>
+        <span><i class="seat-swatch booked"></i> Booked</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-bar shadow">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <div class="small text-muted">Selected: <span id="selected-seats">none</span></div>
+        <div class="fw-bold fs-5">₹<span id="total">0</span> <small class="text-muted fw-normal fs-6">+ {{ fee_percent }}% fee</small></div>
+      </div>
+      <button class="btn btn-brand btn-lg" id="proceed" disabled>Proceed to pay</button>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  window.SEAT_CONFIG = { price: {{ show.price|stringformat:"s" }}, max: {{ max_seats }} };
+</script>
+<script src="{% static 'js/seats.js' %}"></script>
+{% endblock %}

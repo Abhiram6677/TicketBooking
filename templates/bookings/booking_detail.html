@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Ticket {{ booking.reference }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="ticket shadow {% if booking.status == 'CANCELLED' %}cancelled{% endif %}">
+      <div class="ticket-head">
+        <div>
+          <div class="small opacity-75">{{ booking.show.event.category.name }}</div>
+          <h1 class="h4 mb-0">{{ booking.show.event.title }}</h1>
+        </div>
+        <span class="badge {% if booking.status == 'CONFIRMED' %}text-bg-success{% else %}text-bg-secondary{% endif %} fs-6">{{ booking.get_status_display }}</span>
+      </div>
+      <div class="ticket-body">
+        <div class="row g-3">
+          <div class="col-6"><div class="label">Date & time</div>{{ booking.show.start_time|date:"D, d M Y" }}<br>{{ booking.show.start_time|date:"h:i A" }}</div>
+          <div class="col-6"><div class="label">Venue</div>{{ booking.show.venue.name }}<br>{{ booking.show.venue.city }}</div>
+          <div class="col-6"><div class="label">Seats ({{ booking.seat_count }})</div>{% for s in booking.seat_list %}<span class="badge text-bg-dark me-1">{{ s }}</span>{% endfor %}</div>
+          <div class="col-6"><div class="label">Booked by</div>{{ booking.user.get_full_name|default:booking.user.username }}</div>
+          <div class="col-6"><div class="label">Paid via</div>{{ booking.get_payment_method_display }}</div>
+          <div class="col-6"><div class="label">Amount</div>₹{{ booking.subtotal }} + ₹{{ booking.convenience_fee }} fee = <strong>₹{{ booking.total_amount }}</strong></div>
+        </div>
+      </div>
+      <div class="ticket-foot">
+        <div>
+          <div class="label">Booking reference</div>
+          <div class="ref">{{ booking.reference }}</div>
+          <div class="small text-muted">Booked {{ booking.created_at|date:"d M Y, h:i A" }}{% if booking.cancelled_at %} · Cancelled {{ booking.cancelled_at|date:"d M Y, h:i A" }}{% endif %}</div>
+        </div>
+        <div class="barcode" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-2 mt-3 d-print-none">
+      <button onclick="window.print()" class="btn btn-outline-dark"><i class="bi bi-printer"></i> Print ticket</button>
+      <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary">All bookings</a>
+      {% if booking.can_cancel and booking.user == user %}
+        <form method="post" action="{% url 'cancel_booking' booking.reference %}" class="ms-auto"
+              onsubmit="return confirm('Cancel this booking? Seats will be released.');">{% csrf_token %}
+          <button class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Cancel booking</button>
+        </form>
+      {% elif booking.status == 'CONFIRMED' %}
+        <span class="ms-auto small text-muted align-self-center">Cancellation closes {{ cutoff_hours }}h before the show.</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

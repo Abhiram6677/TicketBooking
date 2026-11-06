@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}{{ event.title }}{% endblock %}
+{% block content %}
+<nav class="small mb-3"><a href="{% url 'home' %}">Events</a> / {{ event.title }}</nav>
+<div class="row g-4">
+  <div class="col-md-4">
+    {% if event.poster_url %}
+      <img src="{{ event.poster_url }}" class="img-fluid rounded-3 shadow-sm" alt="{{ event.title }}">
+    {% else %}
+      <div class="poster poster-placeholder rounded-3 cat-{{ event.category.slug }}" style="height:320px"><span>{{ event.title|slice:":1" }}</span></div>
+    {% endif %}
+  </div>
+  <div class="col-md-8">
+    <span class="badge bg-brand-subtle text-brand mb-2">{{ event.category.name }}</span>
+    <h1 class="h2">{{ event.title }}</h1>
+    <p class="text-muted"><i class="bi bi-translate"></i> {{ event.language }} &nbsp; <i class="bi bi-clock"></i> {{ event.duration_minutes }} min</p>
+    <p>{{ event.description|linebreaksbr }}</p>
+
+    <h2 class="h5 mt-4">Choose a show</h2>
+    {% for day, shows in shows_by_date.items %}
+      <div class="mb-3">
+        <div class="fw-semibold mb-2">{{ day|date:"l, d M Y" }}</div>
+        <div class="d-flex flex-wrap gap-2">
+          {% for show in shows %}
+            {% if show.is_housefull %}
+              <span class="btn btn-outline-secondary disabled show-btn">
+                {{ show.start_time|date:"h:i A" }}<br><small>{{ show.venue.name }} · Housefull</small>
+              </span>
+            {% else %}
+              <a class="btn btn-outline-brand show-btn" href="{% url 'select_seats' show.id %}">
+                {{ show.start_time|date:"h:i A" }}<br>
+                <small>{{ show.venue.name }}, {{ show.venue.city }} · ₹{{ show.price|floatformat:0|intcomma }} · {{ show.seats_available }} left</small>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% empty %}
+      <div class="alert alert-secondary">No upcoming shows for this event.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

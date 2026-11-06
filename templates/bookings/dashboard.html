@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Admin dashboard</h1>
+  <a href="{% url 'admin:events_show_add' %}" class="btn btn-brand btn-sm"><i class="bi bi-plus-lg"></i> Add show</a>
+</div>
+
+<div class="row g-3 mb-4">
+  {% with s=stats %}
+  <div class="col-6 col-md-3"><div class="card stat shadow-sm"><div class="card-body"><div class="label">Revenue</div><div class="value">₹{{ s.revenue|floatformat:0|intcomma }}</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat shadow-sm"><div class="card-body"><div class="label">Tickets sold</div><div class="value">{{ s.tickets|intcomma }}</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat shadow-sm"><div class="card-body"><div class="label">Bookings (today)</div><div class="value">{{ s.bookings }} <small class="text-muted fs-6">({{ s.today_bookings }})</small></div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat shadow-sm"><div class="card-body"><div class="label">Cancellations</div><div class="value">{{ s.cancelled }}</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat shadow-sm"><div class="card-body"><div class="label">Active events</div><div class="value">{{ s.active_events }}</div></div></div></div>
+  <div class="col-6 col-md-3"><div class="card stat shadow-sm"><div class="card-body"><div class="label">Upcoming shows</div><div class="value">{{ s.upcoming_shows }}</div></div></div></div>
+  {% endwith %}
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold">Top events by revenue</div>
+      <table class="table table-sm mb-0">
+        <thead><tr><th>Event</th><th class="text-end">Tickets</th><th class="text-end">Revenue</th></tr></thead>
+        <tbody>
+          {% for e in top_events %}
+            <tr><td>{{ e.title }}</td><td class="text-end">{{ e.tickets }}</td><td class="text-end">₹{{ e.revenue|floatformat:0|intcomma }}</td></tr>
+          {% empty %}<tr><td colspan="3" class="text-muted">No sales yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold">Shows in the next 3 days</div>
+      <table class="table table-sm mb-0 align-middle">
+        <thead><tr><th>Show</th><th>When</th><th style="width:35%">Occupancy</th></tr></thead>
+        <tbody>
+          {% for s in upcoming %}
+            <tr>
+              <td>{{ s.event.title }}<div class="small text-muted">{{ s.venue.name }}</div></td>
+              <td class="small">{{ s.start_time|date:"d M, h:i A" }}</td>
+              <td>
+                <div class="progress" style="height:8px"><div class="progress-bar bg-brand" style="width:{{ s.occupancy }}%"></div></div>
+                <div class="small text-muted">{{ s.sold }}/{{ s.venue.capacity }} ({{ s.occupancy }}%)</div>
+              </td>
+            </tr>
+          {% empty %}<tr><td colspan="3" class="text-muted">No shows scheduled.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-semibold">Recent bookings</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-hover mb-0">
+          <thead><tr><th>Ref</th><th>Customer</th><th>Event</th><th>Seats</th><th class="text-end">Amount</th><th>Status</th><th>Booked</th></tr></thead>
+          <tbody>
+            {% for b in recent %}
+              <tr>
+                <td><a href="{{ b.get_absolute_url }}">{{ b.reference }}</a></td>
+                <td>{{ b.user.username }}</td>
+                <td>{{ b.show.event.title }}</td>
+                <td class="small">{{ b.seat_labels }}</td>
+                <td class="text-end">₹{{ b.total_amount }}</td>
+                <td><span class="badge {% if b.status == 'CONFIRMED' %}text-bg-success{% else %}text-bg-secondary{% endif %}">{{ b.get_status_display }}</span></td>
+                <td class="small">{{ b.created_at|naturaltime }}</td>
+              </tr>
+            {% empty %}<tr><td colspan="7" class="text-muted">No bookings yet.</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+:root {
+  --brand: #e11d48;
+  --brand-dark: #9f1239;
+  --brand-soft: #ffe4e6;
+}
+
+body { background: #f6f7fb; }
+
+/* Brand helpers */
+.bg-brand { background: var(--brand) !important; }
+.text-brand { color: var(--brand) !important; }
+.bg-brand-subtle { background: var(--brand-soft) !important; }
+.btn-brand { background: var(--brand); border-color: var(--brand); color: #fff; }
+.btn-brand:hover, .btn-brand:focus { background: var(--brand-dark); border-color: var(--brand-dark); color: #fff; }
+.btn-outline-brand { border-color: var(--brand); color: var(--brand); }
+.btn-outline-brand:hover { background: var(--brand); color: #fff; }
+
+.hero { background: linear-gradient(135deg, var(--brand) 0%, #7c3aed 100%); }
+
+/* Event cards */
+.event-card { transition: transform .15s ease, box-shadow .15s ease; border: 0; }
+.event-card:hover { transform: translateY(-3px); box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.1) !important; }
+.poster { height: 200px; object-fit: cover; }
+.poster-placeholder { display: flex; align-items: center; justify-content: center;
+  font-size: 5rem; font-weight: 800; color: rgba(255,255,255,.85);
+  background: linear-gradient(135deg, #334155, #0f172a); }
+.cat-movies    { background: linear-gradient(135deg, #e11d48, #7c3aed); }
+.cat-concerts  { background: linear-gradient(135deg, #0ea5e9, #6366f1); }
+.cat-comedy    { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+.cat-sports    { background: linear-gradient(135deg, #10b981, #0e7490); }
+.cat-theatre   { background: linear-gradient(135deg, #8b5cf6, #db2777); }
+.show-btn { text-align: left; line-height: 1.2; }
+
+/* Seat map */
+.seat-area { overflow-x: auto; padding-bottom: 2rem; }
+.screen { text-align: center; font-size: .75rem; letter-spacing: .3em; color: #64748b;
+  border-top: 4px solid #94a3b8; border-radius: 50% 50% 0 0 / 20px 20px 0 0; padding-top: .5rem;
+  max-width: 600px; margin: 0 auto; }
+.seat-grid { display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: max-content; margin: 0 auto; }
+.seat-row { display: flex; align-items: center; gap: 6px; }
+.row-label { width: 20px; text-align: center; font-weight: 600; color: #64748b; font-size: .8rem; }
+.seat { position: relative; margin: 0; cursor: pointer; }
+.seat input { position: absolute; opacity: 0; pointer-events: none; }
+.seat span { display: inline-flex; width: 30px; height: 28px; align-items: center; justify-content: center;
+  font-size: .7rem; border: 1.5px solid #22c55e; color: #15803d; background: #fff;
+  border-radius: 6px 6px 3px 3px; transition: all .1s; user-select: none; }
+.seat:hover span { background: #dcfce7; }
+.seat.selected span, .seat input:checked + span { background: #22c55e; color: #fff; }
+.seat.booked { cursor: not-allowed; }
+.seat.booked span { background: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; }
+.seat input:focus-visible + span { outline: 2px solid var(--brand); outline-offset: 2px; }
+.legend { display: flex; justify-content: center; gap: 1.5rem; color: #475569; }
+.seat-swatch { display: inline-block; width: 14px; height: 14px; border: 1.5px solid #22c55e; border-radius: 3px; vertical-align: -2px; margin-right: 4px; }
+.seat-swatch.selected { background: #22c55e; }
+.seat-swatch.booked { background: #e2e8f0; border-color: #cbd5e1; }
+.booking-bar { position: sticky; bottom: 0; background: #fff; padding: .75rem 0; margin-top: 1rem; border-top: 1px solid #e2e8f0; z-index: 10; }
+
+/* Ticket */
+.ticket { background: #fff; border-radius: 16px; overflow: hidden; }
+.ticket-head { background: linear-gradient(135deg, var(--brand), #7c3aed); color: #fff; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.ticket-body { padding: 1.5rem; border-bottom: 2px dashed #e2e8f0; }
+.ticket-foot { padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+.ticket .label { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: #94a3b8; }
+.ticket .ref { font-family: ui-monospace, monospace; font-size: 1.4rem; font-weight: 700; letter-spacing: .1em; }
+.barcode { width: 140px; height: 48px;
+  background: repeating-linear-gradient(90deg, #111 0 2px, transparent 2px 4px, #111 4px 5px, transparent 5px 8px); }
+.ticket.cancelled { opacity: .7; }
+.ticket.cancelled .ticket-head { background: #64748b; }
+
+/* Dashboard */
+.stat { border: 0; }
+.stat .label { font-size: .75rem; text-transform: uppercase; color: #64748b; letter-spacing: .05em; }
+.stat .value { font-size: 1.6rem; font-weight: 700; }
+
+@media print {
+  nav.navbar, footer, .alert { display: none !important; }
+  body { background: #fff; }
+}

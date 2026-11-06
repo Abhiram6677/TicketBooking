@@ -1,0 +1,11 @@
+<a href="{{ b.get_absolute_url }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+  <div>
+    <div class="fw-semibold">{{ b.show.event.title }}</div>
+    <div class="small text-muted">{{ b.show.venue }} · {{ b.show.start_time|date:"D, d M Y · h:i A" }}</div>
+    <div class="small">Seats: {{ b.seat_labels }} · Ref {{ b.reference }}</div>
+  </div>
+  <div class="text-end">
+    <div class="fw-bold">₹{{ b.total_amount }}</div>
+    <span class="badge {% if b.status == 'CONFIRMED' %}text-bg-success{% else %}text-bg-secondary{% endif %}">{{ b.get_status_display }}</span>
+  </div>
+</a>

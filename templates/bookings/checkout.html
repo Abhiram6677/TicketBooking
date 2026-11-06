@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <h1 class="h4 mb-3">Review & pay</h1>
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <h2 class="h5 mb-1">{{ show.event.title }}</h2>
+        <div class="text-muted small mb-3">{{ show.venue }} · {{ show.start_time|date:"D, d M Y · h:i A" }}</div>
+        <div class="mb-3">
+          {% for s in seats %}<span class="badge text-bg-dark me-1">{{ s }}</span>{% endfor %}
+          <a href="{% url 'select_seats' show.id %}" class="small ms-2">Change seats</a>
+        </div>
+        <table class="table table-sm mb-0">
+          <tr><td>{{ seats|length }} × ₹{{ show.price }}</td><td class="text-end">₹{{ subtotal }}</td></tr>
+          <tr><td>Convenience fee ({{ fee_percent }}%)</td><td class="text-end">₹{{ fee }}</td></tr>
+          <tr class="fw-bold"><td>Total</td><td class="text-end">₹{{ total }}</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <form method="post" class="card shadow-sm">{% csrf_token %}
+      <div class="card-body">
+        <h2 class="h6">Payment method</h2>
+        {% for value, label in payment_methods %}
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="payment_method" id="pm-{{ value }}" value="{{ value }}" {% if forloop.first %}checked{% endif %}>
+            <label class="form-check-label" for="pm-{{ value }}">{{ label }}</label>
+          </div>
+        {% endfor %}
+        <p class="small text-muted mt-2 mb-3"><i class="bi bi-info-circle"></i> Demo mode: payment is simulated, no money is charged.</p>
+        <button class="btn btn-brand btn-lg w-100">Pay ₹{{ total }} & confirm</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

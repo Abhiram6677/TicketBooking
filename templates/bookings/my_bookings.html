@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}My bookings{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">My bookings</h1>
+<ul class="nav nav-tabs mb-3" role="tablist">
+  <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#upcoming">Upcoming ({{ upcoming|length }})</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#past">Past ({{ past|length }})</button></li>
+  <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cancelled">Cancelled ({{ cancelled|length }})</button></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="upcoming">
+    <div class="list-group shadow-sm">
+      {% for b in upcoming %}{% include "bookings/_booking_row.html" %}
+      {% empty %}<div class="list-group-item text-muted">No upcoming bookings. <a href="{% url 'home' %}">Find an event</a>.</div>{% endfor %}
+    </div>
+  </div>
+  <div class="tab-pane fade" id="past">
+    <div class="list-group shadow-sm">
+      {% for b in past %}{% include "bookings/_booking_row.html" %}
+      {% empty %}<div class="list-group-item text-muted">No past bookings.</div>{% endfor %}
+    </div>
+  </div>
+  <div class="tab-pane fade" id="cancelled">
+    <div class="list-group shadow-sm">
+      {% for b in cancelled %}{% include "bookings/_booking_row.html" %}
+      {% empty %}<div class="list-group-item text-muted">No cancelled bookings.</div>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

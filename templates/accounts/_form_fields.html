@@ -1,0 +1,13 @@
+{% for field in form %}
+  <div class="mb-3">
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    <input class="form-control {% if field.errors %}is-invalid{% endif %}"
+           type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}"
+           id="{{ field.id_for_label }}"
+           {% if field.field.widget.input_type != "password" %}value="{{ field.value|default_if_none:'' }}"{% endif %}
+           {% if field.field.required %}required{% endif %}>
+    {% for err in field.errors %}<div class="invalid-feedback">{{ err }}</div>{% endfor %}
+    {% if field.help_text and not field.errors %}<div class="form-text small">{{ field.help_text|safe }}</div>{% endif %}
+  </div>
+{% endfor %}
+{% for err in form.non_field_errors %}<div class="alert alert-danger">{{ err }}</div>{% endfor %}
